@@ -115,10 +115,8 @@ def join_units(string):
 
 def preprocess_products(row):
     """preprocess the product based on rules"""
-    row = row.replace('unknown','').replace(',','.') .replace('&nbsp', ' ').replace('\xa0','').replace('"','').\
-          replace("/", ' ').replace('**entrega en 2 dias habiles**','').replace('**entrega en 4 dias habiles**','').replace('**entrega en 6 dias habiles**','').\
-          replace('**entrega en 7 dias habiles**','').replace('** entrega en 2 dias habiles**','').replace('** entrega en 4 dias habiles**','').\
-          replace('** entrega en 6 dias habiles**','').replace('** entrega en 7 dias habiles**','').replace(' ** entrega en 4 dias habiles **','')
+    row = row.replace('unknown','').replace(',','.') .replace('&nbsp', ' ').\
+        replace('\xa0','').replace('"','').replace("/", ' ')
 
     row = ''.join(re.findall('[-+]?(?:\d*\.\d+|\d+)|\d|\s|\w|\+', row)).lower()
     row = row.replace('-', ' ')
