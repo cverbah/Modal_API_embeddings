@@ -15,6 +15,7 @@ q_gpu = 1
 GPU = gpu.T4(count=q_gpu)
 volume = Volume.from_name("my-volume-1")
 
+
 app = App(name="api-generate-embeddings")
 
 conda_image = (Image.conda()
@@ -133,7 +134,7 @@ async def return_img_embedding(sku_to_search: str, retail_id_to_search: int):
               secret=Secret.from_name("automatch-secret-keys"),
               mounts=[Mount.from_local_file("automatch-309218-5f83b019f742.json",
                       remote_path="/root/automatch-309218-5f83b019f742.json")],
-              volumes={"/vol": volume},
+              volumes={"/vol": volume}, _allow_background_volume_commits=True,
               timeout=999)  # schedule=Period(minutes=30)
 @asgi_app(label='generate-embeddings-geti')
 def fastapi_embeddings_app():
