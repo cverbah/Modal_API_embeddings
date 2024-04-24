@@ -27,9 +27,8 @@ load_dotenv()
 MYSQL_PASSWORD = os.environ["MYSQL_PASSWORD"]
 MYSQL_HOST = os.environ['MYSQL_HOST']
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'automatch-309218-5f83b019f742.json'
-CACHE_DIR = "/cache"
-
-
+#CACHE_DIR = '~/.cache/huggingface/hub'
+CACHE_DIR = '/Users/cvergarabah/.cache/huggingface/hub'
 # preprocessing
 def get_key(val, dict):
     """returns the key of the dict_units dict"""

@@ -1,7 +1,7 @@
 # libraries
 from utils import *
 import pandas as pd
-from modal import Image, Secret, Mount, Stub, asgi_app, gpu, NetworkFileSystem
+from modal import Image, Secret, Mount, asgi_app, gpu, NetworkFileSystem, App, Volume
 from fastapi import FastAPI, Request
 import time
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -12,10 +12,10 @@ from io import BytesIO
 import json
 
 q_gpu = 1
-GPU = gpu.A10G(count=q_gpu)
-volume = NetworkFileSystem.persisted("model-cache-vol-3")
-CACHE_DIR = "/cache"
-stub = Stub(name="api-generate-embeddings")
+GPU = gpu.T4(count=q_gpu)
+volume = Volume.from_name("my-volume-1")
+
+app = App(name="api-generate-embeddings")
 
 conda_image = (Image.conda()
                .conda_install(
@@ -41,7 +41,7 @@ class MyMiddleware(BaseHTTPMiddleware):
 
 
 embeddings_app = FastAPI(title='EmbeddingsGeneratorAPI',
-                       summary="Embeddings: txt & img generator API - Geti", version="1.0",
+                       summary="Embeddings: txt & img generator API - Geti", version="2.0",
                        contact={
                                 "name": "Cristian Vergara",
                                 "email": "cvergara@geti.cl",
@@ -129,12 +129,12 @@ async def return_img_embedding(sku_to_search: str, retail_id_to_search: int):
         return output
 
 
-@stub.function(image=conda_image, gpu=GPU,      #keep_warm=1,
-               secret=Secret.from_name("automatch-secret-keys"),
-               mounts=[Mount.from_local_file("automatch-309218-5f83b019f742.json",
-                       remote_path="/root/automatch-309218-5f83b019f742.json")],
-               network_file_systems={CACHE_DIR: volume},
-               timeout=999)  # schedule=Period(minutes=30)
+@app.function(image=conda_image, gpu=GPU,      #keep_warm=1,
+              secret=Secret.from_name("automatch-secret-keys"),
+              mounts=[Mount.from_local_file("automatch-309218-5f83b019f742.json",
+                      remote_path="/root/automatch-309218-5f83b019f742.json")],
+              volumes={"/vol": volume},
+              timeout=999)  # schedule=Period(minutes=30)
 @asgi_app(label='generate-embeddings-geti')
 def fastapi_embeddings_app():
     # check available GPUs
