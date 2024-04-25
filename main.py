@@ -11,8 +11,7 @@ import os
 from io import BytesIO
 import json
 
-q_gpu = 1
-GPU = gpu.T4(count=q_gpu)
+GPU = gpu.T4(count=1)
 volume = Volume.from_name("my-volume-1")
 
 
