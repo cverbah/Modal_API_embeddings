@@ -12,13 +12,12 @@ from io import BytesIO
 import json
 
 GPU = gpu.T4(count=1)
-volume = Volume.from_name("my-volume-1")
-
+volume = Volume.from_name("my-volume-3")
 
 app = App(name="api-generate-embeddings")
 
-conda_image = (Image.conda()
-               .conda_install(
+conda_image = (Image.micromamba()
+               .micromamba_install(
                 "cudatoolkit=11.2",
                 "cudnn=8.1.0",
                 "cuda-nvcc",
@@ -135,8 +134,8 @@ async def return_img_embedding(sku_to_search: str, retail_id_to_search: int):
                       remote_path="/root/automatch-309218-5f83b019f742.json")],
               volumes={"/vol": volume}, _allow_background_volume_commits=True,
               timeout=999)  # schedule=Period(minutes=30)
-@asgi_app(label='generate-embeddings-geti')
-def fastapi_embeddings_app():
+@asgi_app(label='generate-embeddings-v1')
+def txt_img_embeddings_app():
     # check available GPUs
     print(get_available_gpus())
 
